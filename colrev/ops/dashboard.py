@@ -11,11 +11,6 @@ import bibtexparser
 class Dashboard():
     
     def filteringData ():
-        data = (pd.read_csv("./data/records.csv").query("colrev_status == 'rev_synthesized'"))
-        data.rename(columns={'Unnamed: 0':'index'}, inplace=True)
-        return data
-
-    def makeTable(self):
         with open(
             "./data/records.bib"
         ) as bibtex_file:  # changing file format to csv for pandas
@@ -24,7 +19,12 @@ class Dashboard():
                 raise Exception("Die Datei 'records.bib' ist leer.") # throwing Exception 
         df = pd.DataFrame(bib_database.entries)
         df.to_csv("./data/records.csv", index = True)
+        data = (pd.read_csv("./data/records.csv").query("colrev_status == 'rev_synthesized'"))
+        data.rename(columns={'Unnamed: 0':'index'}, inplace=True)
+        return data
 
+    def makeTable(self):
+        
         data= Dashboard.filteringData()
         
 
