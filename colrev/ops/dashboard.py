@@ -4,7 +4,7 @@ from __future__ import annotations
 
 
 import pandas as pd
-from dash import Dash, dcc, html
+from dash import Dash, dcc, html, Input, Output, dash_table, State
 import bibtexparser
 
 
@@ -51,24 +51,47 @@ class Dashboard():
                         )])
                         ], className="flexboxtable"),
                 html.Div(children=[
-                    html.Div(children="search: ", className="search-box"),
                     dcc.Input(
-                        type="text",
-                    ),   
-                    html.Button(id="submit-button", children="search")
-                ]),                      
-                        html.Table(
-                            [html.Tr([html.Th(col) for col in data.columns])] + 
-                            [html.Tr([html.Td(data.iloc[i][col]) for col in data.columns]) for i in range(len(data))],
-                            className="styled-table"),  
+                        type="text", id="searchbar", value=""
+                    ),
+                    html.Button('Search!', id='searchbutton')
+                ]), 
+                html.Br(),                     
+                html.Div([
+                    dash_table.DataTable(data = data.to_dict('records'),id = "table")
+                ]),
+                html.Div(id="table_empty", children= []) 
                         
             ])
+
+        @app.callback(
+            Output("table", "data"),
+            Output("table_empty", "children"),
+            State("searchbar", "value"),
+            Input("searchbutton", "n_clicks"),
+        )
+        def update_table(value, n_clicks):
+            
+            
+            data2 = data.copy(deep = True).to_dict('records')
+
+            output = ""
+
+            for row in data.to_dict('records'):
+                found = False
+                for key in row:
+                    if value.lower().strip() in str(row[key]).lower():
+                        found = True
+                
+                if found is False:  
+                    data2.remove(row)
+                
+                if not data2:
+                    output = "no records found for your search"
+                    
+            return data2, output
+            
         return app
-
-
-    
-
-
 
 
 
