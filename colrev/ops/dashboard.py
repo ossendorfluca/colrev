@@ -61,22 +61,11 @@ class Dashboard():
         @app.callback(
             Output("table", "data"),
             Output("table_empty", "children"),
-            Input("sortby", "value"),
             Input("search", "value"),
         )
-        def update_table(sortby, search):
-            sorted_data = data.copy(deep=True)
-            output = ""
+        def update_table(value):
+            
 
-            if sortby == "year":
-                sorted_data = sorted_data.sort_values(by=["year"])  # sort by year
-            elif sortby == "title":
-                sorted_data = sorted_data.sort_values(by=["title"])  # sort by title
-            elif sortby == "author":
-                sorted_data = sorted_data.sort_values(by=["author"])  # sort by author
-
-
-            return sorted_data.to_dict("records"), output
             
             data2 = data.copy(deep = True).to_dict('records')
 
