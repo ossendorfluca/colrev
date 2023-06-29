@@ -36,29 +36,23 @@ class Dashboard():
 
         app.layout = html.Div(                              # defining th content
             children=[
-                html.Div(
-                children=[
+                html.Div(children=[
                     html.Img(src="assets/favicon.ico", className="logo"), 
                     html.H1(children="DASHBOARD", className= "header-title")], className="header"),
 
-                html.Div(children=[    
-                    html.H1(children="CURRENTLY SYNTHESIZED RECORDS", className="table-header"),
-
-                    html.Div(children=[
-                        dcc.Dropdown(
-                            id="sortby",
-                            options=["index","year", "author (alphabetically)"],
-                        )])
-                        ], className="flexboxtable"),
-                html.Div(children=[
-                    dcc.Input(
-                        type="text", id="searchbar", value=""
+                html.Div(className = "options", children=[
+                    dcc.Dropdown(
+                        id="sortby",
+                        options=["index","year", "author (alphabetically)"], 
+                        placeholder="Sort by..."
                     ),
-                    html.Button('Search!', id='searchbutton')
-                ]), 
-                html.Br(),                     
+                    dcc.Input(type="text", id="search", value="", placeholder="  Search for..."),
+                ]),
+                html.H1(children="currently synthesized records:", id="headline"),                   
                 html.Div([
-                    dash_table.DataTable(data = data.to_dict('records'),id = "table")
+                    dash_table.DataTable(data = data.to_dict('records'),id = "table", 
+                    style_cell = {'font-family': 'Lato, sans-serif','font-size': '20px','text-align': 'left'},
+                    style_header = {'font-weight': 'bold'})
                 ]),
                 html.Div(id="table_empty", children= []) 
                         
@@ -67,10 +61,9 @@ class Dashboard():
         @app.callback(
             Output("table", "data"),
             Output("table_empty", "children"),
-            State("searchbar", "value"),
-            Input("searchbutton", "n_clicks"),
+            Input("search", "value"),
         )
-        def update_table(value, n_clicks):
+        def update_table(value):
             
             
             data2 = data.copy(deep = True).to_dict('records')
